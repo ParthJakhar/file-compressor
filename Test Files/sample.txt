@@ -1,0 +1,12 @@
+In the modern era, the transmission of data via the Internet depends on time. More data takes more time to transmit. Huffman coding reduces the data size thus data transmission time is significantly reduced due to the Huffman coding algorithm. It is the basis of many data compression and encoding schemes and also helps in lossless data encoding. It has different real-world applications and some of them are given below:
+
+Data compression tools such as GZIP, PKZIP (WinZip) uses Huffman encoding.
+Image format like JPEG, PNG also uses Huffman encoding.
+DEFLATE (a lossless data compression algorithm) also uses a combination of Huffman algorithm.
+Huffman based code compression techniques also used for embedded processors.
+It is also used in advanced audio coding standard.
+This algorithm is used for compressing data and reducing its size without losing any information. This algorithm consists of two major steps:
+
+Building a Huffman tree from the input characters
+Traversing the Huffman tree to assign codes to the characters (encoding)
+For decompression(decoding of data), the Huffman tree must be somehow reconstructed. One way is to store the encoding map (containing the characters and their frequency count) along with the encoded data but the overhead in such a case could amount to several kilobytes, so this method has little practical use. For this project, we studied and used the approach where the information to reconstruct the tree is sent as a preorder traversal. The non-leaf node is indicated as 0 and leaf node as 1 and the character on the leaf is also stored with it. It takes comparatively a smaller number of bytes and hence it is one of the efficient ways to store the information of Huffman tree.

@@ -1,48 +1,44 @@
 #include <iostream>
 #include <fstream>
 #include <stack>
+#include <string>
 using namespace std;
 
-
-
 class Node {
-    public:
+public:
     string data;
     Node* next;
 
-    Node(string data) {     // constructor
-        this -> data = data;
-        this -> next = NULL;
+    Node(string data) {
+        this->data = data;
+        this->next = NULL;
     }
 };
 
 void display(Node*);
 
 class Editor {
-    
-    public:
-    void add_line(Node* &root) {    // add a user given line to the end of text
-    
+public:
+    void add_line(Node* &root) {
         string line;
         cout << "Enter the line to insert:" << endl;
-        getline(cin, line, '\n');       // input text until enter is pressed
+        getline(cin, line, '\n');
 
-        if(root == NULL) {      // insert line in an empty list
+        if (root == NULL) {
             root = new Node(line);
             return;
         }
 
         Node* root_ref = root;
-        while(root_ref -> next != NULL) {   // traverse the whole list
-            root_ref = root_ref -> next;
+        while (root_ref->next != NULL) {
+            root_ref = root_ref->next;
         }
-        
+
         Node* temp = new Node(line);
-        root_ref -> next = temp;    // insert the line at end
+        root_ref->next = temp;
     }
 
-    void add_line_at(Node* &root) {   // add a line at a particular index
-
+    void add_line_at(Node* &root) {
         string line;
         cout << "Enter the line to insert:" << endl;
         getline(cin, line, '\n');
@@ -50,295 +46,277 @@ class Editor {
         int line_no;
         cout << "Enter index to insert at: ";
         cin >> line_no;
+        cin.ignore();
 
         Node* temp = new Node(line);
 
-        if(line_no == 1) {      // add node to the head of list
-            temp -> next = root;
+        if (line_no == 1) {
+            temp->next = root;
             root = temp;
             return;
         }
 
         Node* root_ref = root;
-
-        for(int i=1; i<line_no-1; i++) {       // traverse till the specified index is reached
-            root_ref = root_ref -> next;    
+        for (int i = 1; i < line_no - 1; i++) {
+            root_ref = root_ref->next;
         }
 
-        temp -> next = root_ref -> next;    // insert the node
-        root_ref -> next = temp;    
+        temp->next = root_ref->next;
+        root_ref->next = temp;
     }
 
-    void add_line_at(Node* &root, int line_no) {   // add a line at given index
-
+    void add_line_at(Node* &root, int line_no) {
         string line;
         cout << "Enter the line to insert:" << endl;
         getline(cin, line, '\n');
 
         Node* temp = new Node(line);
 
-        if(line_no == 1) {      // add node to the head of list
-            temp -> next = root;
+        if (line_no == 1) {
+            temp->next = root;
             root = temp;
             return;
         }
 
         Node* root_ref = root;
-
-        for(int i=1; i<line_no-1; i++) {       // traverse till the specified index is reached
-            root_ref = root_ref -> next;    
+        for (int i = 1; i < line_no - 1; i++) {
+            root_ref = root_ref->next;
         }
 
-        temp -> next = root_ref -> next;    // insert the node
-        root_ref -> next = temp;    
+        temp->next = root_ref->next;
+        root_ref->next = temp;
     }
 
-    void add_line_at(Node* &root, int line_no, string line) {   
-
+    void add_line_at(Node* &root, int line_no, string line) {
         Node* temp = new Node(line);
 
-        if(line_no == 1) {      // add node to the head of list
-            temp -> next = root;
+        if (line_no == 1) {
+            temp->next = root;
             root = temp;
             return;
         }
 
         Node* root_ref = root;
-
-        for(int i=1; i<line_no-1; i++) {       // traverse till the specified index is reached
-            root_ref = root_ref -> next;    
+        for (int i = 1; i < line_no - 1; i++) {
+            root_ref = root_ref->next;
         }
 
-        temp -> next = root_ref -> next;    // insert the node
-        root_ref -> next = temp;   
+        temp->next = root_ref->next;
+        root_ref->next = temp;
     }
 
-    void replace_line(Node* &root) {    // replace a line 
-
+    void replace_line(Node* &root) {
         int line_no;
         cout << "Enter the line number to replace: ";
         cin >> line_no;
         cin.ignore();
 
-        delete_line(root, line_no);     // delete the line at index
-        add_line_at(root, line_no);     // replace it with a new line
+        delete_line(root, line_no);
+        add_line_at(root, line_no);
     }
 
-    void interchange_lines(Node* &root) {   // interchange two lines using their index
-
-        int index1, index2;     // index of the lines to interchange
+    void interchange_lines(Node* &root) {
+        int index1, index2;
         cout << "Enter the index for line 1: ";
         cin >> index1;
         cout << "Enter the index for line 2: ";
         cin >> index2;
 
         Node* root_ref = root;
-        for(int i=1; i<index1; i++) {
-            root_ref = root_ref -> next;
+        for (int i = 1; i < index1; i++) {
+            root_ref = root_ref->next;
         }
-        string line1 = root_ref -> data;    // get text of line 1
-        
-        root_ref = root;
-        for(int i=1; i<index2; i++) {
-            root_ref = root_ref -> next;
-        }
-        string line2 = root_ref -> data;    // get text of line 2
+        string line1 = root_ref->data;
 
-        // insert the line at the other index
+        root_ref = root;
+        for (int i = 1; i < index2; i++) {
+            root_ref = root_ref->next;
+        }
+        string line2 = root_ref->data;
+
         add_line_at(root, index1, line2);
-        delete_line(root, index1+1);
+        delete_line(root, index1 + 1);
         add_line_at(root, index2, line1);
-        delete_line(root, index2+1);
+        delete_line(root, index2 + 1);
     }
 
-    void delete_line(Node* &root) {     // delete a line whose index is given by the user
-
+    void delete_line(Node* &root) {
         int line_no;
         cout << "Enter line number to delete: ";
         cin >> line_no;
-        
-        if(line_no == 1) {      // delete node at the head of list
+
+        if (line_no == 1) {
             Node* temp = root;
-            root = root -> next;
-            delete temp;        // free up space 
+            root = root->next;
+            delete temp;
             return;
         }
 
         Node* root_ref = root;
-
-        for(int i=1; i<line_no-1; i++) {       // traverse till the specified index is reached
-            root_ref = root_ref -> next;    
+        for (int i = 1; i < line_no - 1; i++) {
+            root_ref = root_ref->next;
         }
 
-        Node* temp = root_ref -> next;
-        root_ref -> next = temp -> next;
-        delete temp;        // free up space
+        Node* temp = root_ref->next;
+        root_ref->next = temp->next;
+        delete temp;
     }
 
-    void delete_line(Node* &root, int line_no) {     // delete the line at given index
-        
-        if(line_no == 1) {      // delete node at the head of list
+    void delete_line(Node* &root, int line_no) {
+        if (line_no == 1) {
             Node* temp = root;
-            root = root -> next;
-            delete temp;        // free up space 
+            root = root->next;
+            delete temp;
             return;
         }
 
         Node* root_ref = root;
-
-        for(int i=1; i<line_no-1; i++) {       // traverse till the specified index is reached
-            root_ref = root_ref -> next;    
+        for (int i = 1; i < line_no - 1; i++) {
+            root_ref = root_ref->next;
         }
 
-        Node* temp = root_ref -> next;
-        root_ref -> next = temp -> next;
-        delete temp;        // free up space
+        Node* temp = root_ref->next;
+        root_ref->next = temp->next;
+        delete temp;
     }
 
-    void open_file(Node* &root) {   // read a file and return the head of linked list
-
-        ifstream file;      // open file in read mode
-        string line;
-
-        file.open("sample.txt");    
-        file.seekg(0, ios::beg);       // set the pointer to the start of file
-
-        if(!file) {
+    void open_file(Node* &root) {
+        ifstream file("sample.txt");
+        if (!file) {
             cout << "File couldn't open successfully." << endl;
             return;
         }
-        else {
-            cout << "File opened successfully." << endl;
-        }
 
-        while(getline(file, line)) {    // execute until file is read completely
-
-            //getline(file, line);    // read a single line from file
-            if(root == NULL) {
-                root = new Node(line);      // head node
-                continue;   
+        string line;
+        while (getline(file, line)) {
+            if (root == NULL) {
+                root = new Node(line);
+                continue;
             }
             Node* root_ref = root;
-
-            while(root_ref -> next != NULL) {   
-                root_ref = root_ref -> next;    // traverse till the end of linked list
+            while (root_ref->next != NULL) {
+                root_ref = root_ref->next;
             }
-
-            Node* temp = new Node(line);    
-            root_ref -> next = temp;
+            Node* temp = new Node(line);
+            root_ref->next = temp;
         }
-    
-        file.close();   
-    }   
+        file.close();
+        cout << "File opened successfully." << endl;
+    }
 
-    void save_file(Node* &root) {   // save the modified file
-
-        ofstream file;
-        file.open("input.txt");    // open in output mode
+    void save_file(Node* &root) {
+        ofstream file("input.txt");
 
         Node* root_ref = root;
-
-        while(root_ref != NULL) {
-
-            string line = root_ref -> data;
-
-            file << line << endl;       // write data in the file
-            root_ref = root_ref -> next;
+        while (root_ref != NULL) {
+            file << root_ref->data << endl;
+            root_ref = root_ref->next;
         }
         cout << "File saved successfully." << endl;
         file.close();
     }
 
-    void push_root(Node* root, stack<Node*> &st) {  // push the current root into stack
-
+    void push_root(Node* root, stack<Node*> &st) {
         Node* head = NULL;
-
-        while(root != NULL) {   // create a copy of linked list
-
-            if(head == NULL) {
-                head = new Node(root -> data);
-                root = root -> next;
+        while (root != NULL) {
+            if (head == NULL) {
+                head = new Node(root->data);
+                root = root->next;
                 continue;
             }
 
             Node* head_ref = head;
-            while(head_ref -> next != NULL) {
-                head_ref = head_ref -> next;
+            while (head_ref->next != NULL) {
+                head_ref = head_ref->next;
             }
-
-            Node* temp = new Node(root -> data);
-            head_ref -> next = temp;
-
-            root = root -> next;
+            Node* temp = new Node(root->data);
+            head_ref->next = temp;
+            root = root->next;
         }
-        
-        st.push(head);  // push the head of the list in stack
+        st.push(head);
     }
 
-    void undo(Node* &root, stack<Node*> &st) {  // restore the previous state of program
-
-        if(st.size() > 1) {
+    void undo(Node* &root, stack<Node*> &st) {
+        if (st.size() > 1) {
             st.pop();
-            root = st.top();    // get the previous root
-        }   
-        else {
+            root = st.top();
+        } else {
             cout << "\nUNDO unavailable..." << endl;
         }
     }
 
-    void display(Node* root) {      // display the content of file
+    void display(Node* root) {
         cout << "Current text:" << endl;
-        int i=0;
-        while(root != NULL) {
-            cout << ++i << "> ";    // display line number
-            cout << root -> data << endl;
-            root = root -> next;
+        int i = 0;
+        while (root != NULL) {
+            cout << ++i << "> " << root->data << endl;
+            root = root->next;
         }
         cout << endl;
     }
 
-    void begin(Node* &root) {     // contoller function
+    void search_word(Node* root) {
+        string word;
+        cout << "Enter the word to search: ";
+        cin >> word;
 
+        int line_no = 1;
+        bool found = false;
+        while (root != NULL) {
+            if (root->data.find(word) != string::npos) {
+                cout << "Word found at line " << line_no << endl;
+                found = true;
+            }
+            root = root->next;
+            line_no++;
+        }
+
+        if (!found) {
+            cout << "Word not found in any line." << endl;
+        }
+    }
+
+    void begin(Node* &root) {
         open_file(root);
 
         stack<Node*> st;
         push_root(root, st);
+
         int select;
-
-        while(1) {
-
+        while (1) {
             cout << "Enter your Selection:" << endl;
             cout << "1. Insert line" << endl;
-            cout << "2. Insert line at index" << endl; 
+            cout << "2. Insert line at index" << endl;
             cout << "3. Replace a line" << endl;
             cout << "4. Interchange two lines" << endl;
             cout << "5. Delete line" << endl;
             cout << "6. UNDO" << endl;
             cout << "7. Display text file" << endl;
             cout << "8. Save File" << endl;
+            cout << "9. Search for a word" << endl;
             cout << "-1. Exit" << endl;
             cout << ">> ";
 
             cin >> select;
             cin.ignore();
-            switch(select) 
-            {
+
+            switch (select) {
                 case 1:
-                    add_line(root);           
-                    push_root(root, st);   
+                    add_line(root);
+                    push_root(root, st);
                     break;
                 case 2:
-                    add_line_at(root);      
-                    push_root(root, st);               
+                    add_line_at(root);
+                    push_root(root, st);
                     break;
                 case 3:
-                    replace_line(root);  
+                    replace_line(root);
                     break;
                 case 4:
                     interchange_lines(root);
                     break;
                 case 5:
-                    delete_line(root);           
+                    delete_line(root);
                     break;
                 case 6:
                     undo(root, st);
@@ -349,20 +327,20 @@ class Editor {
                 case 8:
                     save_file(root);
                     break;
+                case 9:
+                    search_word(root);
+                    break;
                 case -1:
                     cout << "Editor exited...";
-                    return;   
+                    return;
             }
         }
     }
 };
 
 int main() {
-
     Node* root = NULL;
     Editor a;
-
     a.begin(root);
-
     return 0;
 }

@@ -256,26 +256,26 @@ public:
     }
 
     void search_word(Node* root) {
-        string word;
-        cout << "Enter the word to search: ";
-        cin >> word;
+  string word;
+  cout << "Enter the word to search: ";
+  cin >> word;
 
-        int line_no = 1;
-        bool found = false;
-        while (root != NULL) {
-            if (root->data.find(word) != string::npos) {
-                cout << "Word found at line " << line_no << endl;
-                found = true;
-            }
-            root = root->next;
-            line_no++;
-        }
-
-        if (!found) {
-            cout << "Word not found in any line." << endl;
-        }
+  int line_no = 1;
+  bool found = false;
+  while (root != NULL) {
+    if (root->data.find(word) != string::npos) {
+      cout << "Word found at line " << line_no << ":" << endl;
+      cout << root->data << endl; // Print the entire line
+      found = true;
     }
+    root = root->next;
+    line_no++;
+  }
 
+  if (!found) {
+    cout << "Word not found in any line." << endl;
+  }
+} 
     void begin(Node* &root) {
         open_file(root);
 

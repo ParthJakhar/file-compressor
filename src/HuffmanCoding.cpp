@@ -34,7 +34,7 @@ public:
 	}*root;
 
 	//Struct COMPARE FREQUENCY
-	//Used for making min priority queue 
+	//Used for making min priority queue
 	struct CompareFrequency {
 		bool operator()(HuffmanNode* const& n1, HuffmanNode* const& n2)
 		{
@@ -192,7 +192,7 @@ HuffmanTree::HuffmanNode* HuffmanEncoding::buildEncodingTree(unordered_map<int, 
 	//Repeatedly remove two nodes from the the queue and join them into a new node whose frequency is their sum
 	//The two nodes are positioned as children of the new node and the new node is re-inserted into the queue in sorted order
 	while (pq.size() != 1) {
-		HuffmanTree::HuffmanNode* n1 = pq.top(); 
+		HuffmanTree::HuffmanNode* n1 = pq.top();
 		pq.pop();
 		HuffmanTree::HuffmanNode* n2 = pq.top();
 		pq.pop();
@@ -390,128 +390,125 @@ long long int calculatesize(string st)
 --------------------*/
 
 int main() {
-	HuffmanEncoding h;
-	HuffmanTree::HuffmanNode* r;
-	ifstream infile1, infile2;
-	ofstream outfile1, outfile2;
-	unordered_map<int, int> frequencies;
-	unordered_map<int, string> codes;
-	string fileName, fileName_;
-	std::uintmax_t size1, size2;
-	size_t lastIndex;
-	int userChoice, i, count1, j, count2;
+    HuffmanEncoding h;
+    HuffmanTree::HuffmanNode* r;
+    ifstream infile1, infile2;
+    ofstream outfile1, outfile2;
+    unordered_map<int, int> frequencies;
+    unordered_map<int, string> codes;
+    string fileName, fileName_;
+    std::uintmax_t size1, size2;
+    size_t lastIndex;
+    int userChoice, i, count1, j, count2;
 
-	//Display menu
-	cout << "\n-------------------------------" << endl;
-	cout << "\tHuffman Coding";
-	cout << "\n-------------------------------\n" << endl;
-	cout << "1. Compress a File" << endl;
-	cout << "2. Decompress a File" << endl;
-	cout << "\nEnter your choice : ";
-	cin >> userChoice;
-	cin.ignore();
+    do {
+        // Display menu
+        cout << "\n-------------------------------" << endl;
+        cout << "\tHuffman Coding";
+        cout << "\n-------------------------------\n" << endl;
+        cout << "1. Compress a File" << endl;
+        cout << "2. Decompress a File" << endl;
+        cout << "3. Exit" << endl;
+        cout << "\nEnter your choice : ";
+        cin >> userChoice;
+        cin.ignore();
 
-	switch (userChoice) {
+        switch (userChoice) {
+            case 1: {
+                // Take user input
+                cout << "Enter name/location of file to encode: ";
+                getline(cin, fileName);
+                lastIndex = fileName.find_last_of(".");
+                fileName_ = fileName.substr(0, lastIndex);
 
-	//COMPRESS FILE
-	case 1:
+                // Open file streams
+                infile1.open(fileName);
+                outfile1.open(fileName_ + "_encoded.huf", ios::out | ios::binary);
 
-		//Take user input 
-		cout << "Enter name/location of file to encode: ";
-		getline(cin, fileName);
-		lastIndex = fileName.find_last_of(".");
-		fileName_ = fileName.substr(0, lastIndex);
+                // Count frequencies
+                frequencies = h.countFrequencies(infile1);
 
-		//Open file streams
-		infile1.open(fileName);
-		outfile1.open(fileName_ + "_encoded.huf", ios::out | ios::binary);
+                // Display frequency map
+                cout << "\n\nFrequency Map:\n" << endl;
+                i = 1;
+                count1 = frequencies.size();
+                cout << "{";
+                for (auto& x : frequencies) {
+                    if (i != count1) {
+                        cout << (char)x.first << ":" << x.second << ", ";
+                    } else {
+                        cout << (char)x.first << ":" << x.second;
+                    }
+                    i++;
+                }
+                cout << "}" << endl;
 
-		//Count frequencies
-		frequencies = h.countFrequencies(infile1);
+                // Build Huffman tree
+                r = h.buildEncodingTree(frequencies);
 
-		//Display frequency map
-		cout << "\n\nFrequency Map:\n" << endl;
-		i = 1;
-		count1 = frequencies.size();
-		cout << "{";
-		for (auto& x : frequencies) {
-			if (i != count1) {
-				cout << (char)x.first << ":" << x.second << ", ";
-			}
-			else {
-				cout << (char)x.first << ":" << x.second;
-			}
-			i++;
-		}
-		cout << "}" << endl;
+                // Build encoding map
+                h.buildEncodingMap(r, "", codes);
 
-		//Build Huffman tree
-		r = h.buildEncodingTree(frequencies);
+                // Display encoding map
+                cout << "\n\nEncoding Map:\n" << endl;
+                j = 1;
+                count2 = codes.size();
+                cout << "{";
+                for (auto& y : codes) {
+                    if (j != count2) {
+                        cout << (char)y.first << ":" << y.second << ", ";
+                    } else {
+                        cout << (char)y.first << ":" << y.second;
+                    }
+                    j++;
+                }
+                cout << "}" << endl;
 
-		//Build encoding map
-		h.buildEncodingMap(r, "", codes);
+                // Compress file
+                h.compressFile(infile1, r, codes, outfile1);
 
-		//Display encoding map
-		cout << "\n\nEncoding Map:\n" << endl;
-		j = 1;
-		count2 = codes.size();
-		cout << "{";
-		for (auto& y : codes) {
-			if (j != count2) {
-				cout << (char)y.first << ":" << y.second << ", ";
-			}
-			else {
-				cout << (char)y.first << ":" << y.second;
-			}
-			j++;
-		}
-		cout << "}" << endl;
+                // Close streams
+                infile1.close();
+                outfile1.close();
 
-		//Compress file
-		h.compressFile(infile1, r, codes, outfile1);
+                // Display sizes and compression ratio
+                size1 = calculatesize(fileName);
+                size2 = calculatesize(fileName_ + "_encoded.huf");
+                cout << "\n\nSize of the original file is " << size1 << " bytes" << endl;
+                cout << "Size of the encoded file is " << size2 << " bytes" << endl;
+                cout << "Compression ratio is " << (float)size1 / size2 << ":1" << endl;
+                cout << "Compression percentage is " << 100 - ((float)size2 / size1) * 100 << "%" << endl;
+                break;
+            }
+            case 2: {
+                // Take user input
+                cout << "Enter name/location of file to decode: ";
+                getline(cin, fileName);
+                lastIndex = fileName.find("_encoded.huf");
+                fileName_ = fileName.substr(0, lastIndex);
 
-		//Close streams
-		infile1.close();
-		outfile1.close();
+                // Open file streams
+                infile2.open(fileName, ios::binary | ios::in);
+                outfile2.open(fileName_ + "_decoded.txt");
 
-		//Display sizes and compression ratio
-		// size1 = std::filesystem::file_size(fileName);
-		// size2 = std::filesystem::file_size(fileName_ + "_encoded.huf");
-		
-		size1 = calculatesize(fileName);
-		size2 = calculatesize(fileName_ + "_encoded.huf");
-		cout << "\n\nSize of the original file is " << size1 << " bytes" << endl;
-		cout << "Size of the encoded file is " << size2 << " bytes" << endl;
-		cout << "Compression ratio is " << (float)size1/size2 << ":1" << endl;
-		cout << "Compression percentage is " << 100 - ((float)size2 / size1) * 100 << "%" << endl;
-		break;
+                // Decompress file
+                h.decompressFile(infile2, outfile2);
+                cout << endl;
 
-	//DECOMPRESS FILE
-	case 2:
-		
-		//Take user input 
-		cout << "Enter name/location of file to decode: ";
-		getline(cin, fileName);
-		lastIndex = fileName.find("_encoded.huf");
-		fileName_ = fileName.substr(0, lastIndex);
+                // Close streams
+                infile2.close();
+                outfile2.close();
+                cout << endl;
+                break;
+            }
+            case 3:
+                cout << "Exiting program..." << endl;
+                break;
 
-		//Open file streams
-		infile2.open(fileName, ios::binary | ios::in);
-		outfile2.open(fileName_ + "_decoded.txt");
+            default:
+                cout << "Wrong choice" << endl;
+        }
+    } while (userChoice != 3);
 
-		//Decompress file
-		h.decompressFile(infile2, outfile2);
-		cout<<endl;
-		// cout<<"Decoded file size::"<<calculatesize(fileName_ + "_decoded.txt")<<endl;
-
-		//Close streams
-		infile2.close();
-		outfile2.close();
-		cout << endl;
-		break;
-
-	default:
-		cout << "Wrong choice" << endl;
-	}
-	return 0;
+    return 0;
 }
